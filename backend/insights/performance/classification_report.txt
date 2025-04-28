@@ -1,0 +1,8 @@
+Model Performance Metrics:\n==================================================\n\nAccuracy: 0.953\n\nDetailed Classification Report:\n--------------------\n              precision    recall  f1-score   support
+
+           0       0.97      0.98      0.97      3254
+           1       0.86      0.80      0.83       534
+
+    accuracy                           0.95      3788
+   macro avg       0.91      0.89      0.90      3788
+weighted avg       0.95      0.95      0.95      3788
