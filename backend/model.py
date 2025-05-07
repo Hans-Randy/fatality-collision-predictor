@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
+#from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from utils.config import DATA_DIR, RANDOM_STATE, SERIALIZED_DIR, TARGET
 from utils.data_cleaner import DataCleaner
@@ -19,32 +19,22 @@ from utils.sampling import apply_sampling
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def save_model_artifacts(model: Any, pipeline: Any) -> None:
-    """Save model and preprocessing pipeline."""    
-    joblib.dump(model, SERIALIZED_DIR / 'model.pkl')
-    joblib.dump(pipeline, SERIALIZED_DIR / 'preprocessing_pipeline.pkl') 
-
-
 if __name__ == "__main__":
     # Load your data here
     logging.info("Loading data...")
     df = pd.read_csv(DATA_DIR / 'TOTAL_KSI_6386614326836635957.csv')
     
     # Create preprocessing pipeline
-    preprocessing_pipeline = Pipeline([ # <-- Rename for clarity
+    preprocessing_pipeline = Pipeline([ 
         ('engineer', FeatureEngineer()),
         ('cleaner', DataCleaner()),
-        ('scaler', StandardScaler()) # <-- Add StandardScaler
+        #('scaler', StandardScaler())
     ])
     
     logging.info("Preprocessing data...")
-    # First preprocess the data
-    # Transform the data using the fitted pipeline (results in NumPy array)
     logging.info("Transforming data using full pipeline...")
     processed_data_np = preprocessing_pipeline.fit_transform(df)
-
-    # Get column names and index from the data state *before* the final scaling step
-    # We need to apply the transformations up to the scaler to get the correct columns/index
+    
     logging.info("Retrieving column names and index before scaling...")
     temp_df = df
     processed_columns = None
@@ -66,9 +56,6 @@ if __name__ == "__main__":
         processed_index = temp_df.index
     except Exception as e:
         logging.error(f"Error retrieving column names/index before scaling: {e}")
-        # Handle error appropriately, e.g., raise, log, or fallback
-        # If FeatureEngineer/DataCleaner significantly change columns, this might need adjustment
-        # For now, re-raise to indicate failure
         raise RuntimeError("Could not determine column names/index after preprocessing steps before scaler.") from e
 
     # Create DataFrame from the scaled NumPy array with retrieved columns and index
@@ -94,34 +81,13 @@ if __name__ == "__main__":
         ('knn', KNeighborsClassifier(n_neighbors=5)),
         ('rf', RandomForestClassifier(n_estimators=100, random_state=RANDOM_STATE, class_weight='balanced')),
         # Consider reducing gamma or using 'scale'/'auto' after scaling
-        ('svc', SVC(kernel='rbf', probability=True, C=1, gamma='scale', class_weight='balanced')), # <-- Changed gamma
+        #('svc', SVC(kernel='rbf', probability=True, C=1, gamma='scale', class_weight='balanced')),
         ('dt', DecisionTreeClassifier(criterion='gini', min_samples_split=2, random_state=RANDOM_STATE, class_weight='balanced'))
     ]
 
     # Create a voting classifier.
-    voting_clf = VotingClassifier(estimators=classifiers, voting='hard') # <-- Keep this as is for now
+    voting_clf = VotingClassifier(estimators=classifiers, voting='hard')
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_STATE)
-
-    # Apply sampling technique
-    X_train_resampled, y_train_resampled = apply_sampling(X_train, y_train, method='smote_tomek')
-
-    # Train the voting classifier.
-    # Note: Scaling should ideally be fit only on training data to avoid data leakage.
-    # A more robust approach involves putting the classifier *inside* a pipeline
-    # that includes scaling, especially if doing cross-validation later.
-    # However, for this structure, scaling X before splitting is simpler, though less strict.
-    # A better way:
-    # 1. Split data: X_train, X_test, y_train, y_test = train_test_split(...)
-    # 2. Fit scaler on X_train: scaler.fit(X_train)
-    # 3. Transform train and test: X_train_scaled = scaler.transform(X_train), X_test_scaled = scaler.transform(X_test)
-    # 4. Apply sampling on scaled training data: X_train_resampled, y_train_resampled = apply_sampling(X_train_scaled, y_train, ...)
-    # 5. Train on resampled scaled data: voting_clf.fit(X_train_resampled, y_train_resampled)
-    # 6. Evaluate on scaled test data: evaluate_model(voting_clf, X_test_scaled, y_test)
-
-    # For simplicity with the current structure, we'll train on the already scaled data from the pipeline
-    # (assuming the pipeline was fit_transformed on the *entire* dataset before splitting)
-    # Re-splitting after scaling the full dataset is necessary here:
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_STATE)
     X_train_resampled, y_train_resampled = apply_sampling(X_train, y_train, method='smote_tomek')
 
@@ -133,8 +99,9 @@ if __name__ == "__main__":
     logging.info(f"Test set class distribution: {dict(zip(unique, counts))}")
 
     logging.info("Evaluating model...")
-    evaluate_model(voting_clf, X_test, y_test) # Evaluate on the original (but scaled) X_test
+    evaluate_model(voting_clf, X_test, y_test)  # Evaluate on the original (but scaled) X_test
 
     # Save the *preprocessing* pipeline and the *trained* model
-    save_model_artifacts(voting_clf, preprocessing_pipeline) # <-- Save the pipeline including the scaler
+    joblib.dump(voting_clf, SERIALIZED_DIR / 'model.pkl')
+    joblib.dump(preprocessing_pipeline, SERIALIZED_DIR / 'preprocessing_pipeline.pkl')
     logging.info("Model and preprocessing pipeline saved successfully.")
