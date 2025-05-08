@@ -2,12 +2,14 @@ import logging
 import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 from utils.config import SERIALIZED_DIR
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Load the model and pipeline artifacts
 try:
@@ -18,7 +20,7 @@ try:
         model = None
         pipeline = None
         original_columns = None
-        logging.error("Model or pipelinevfile not found. Please train the model first using model.py.")
+        logging.error("Model or pipeline file not found. Please train the model first using model.py.")
     else:
         model = joblib.load(model_path)
         pipeline = joblib.load(pipeline_path)
@@ -33,8 +35,8 @@ except Exception as e:
 @app.route('/api/predict', methods=['POST'])
 def predict():
     """API endpoint to make predictions."""
-    if not model or not pipeline:
-        return jsonify({"error": "Model or pipeline not loaded. Check server logs."}), 500
+    if not model or not pipeline or not original_columns:
+        return jsonify({"error": "Model, pipeline, or column configuration not loaded. Check server logs."}), 500
 
     try:
         # Get data from POST request
@@ -42,16 +44,29 @@ def predict():
         logging.info(f"Received data for prediction: {data}")
 
         # Convert data into pandas DataFrame
-        input_df = pd.DataFrame(data)
+        input_df_raw = pd.DataFrame(data)
 
-        logging.info(f"Input DataFrame columns after reordering: {input_df.columns.tolist()}")
+        # Ensure all expected columns are present and in the correct order
+        # The target column 'ACCLASS' should not be in the input for prediction.
+        expected_input_columns = [col for col in original_columns if col != 'ACCLASS']
+
+        missing_cols = set(expected_input_columns) - set(input_df_raw.columns)
+        if missing_cols:
+            return jsonify({"error": f"Missing columns in input data: {list(missing_cols)}"}), 400
+
+        # Only keep and reorder columns that are expected for prediction
+        input_df = input_df_raw[expected_input_columns]
+
+        logging.info(f"Input DataFrame columns after reordering & selection: {input_df.columns.tolist()}")
         logging.info(f"Input DataFrame shape: {input_df.shape}")
 
         # Apply the preprocessing pipeline
         processed_input = pipeline.transform(input_df)
-        logging.info("Preprocessing applied successfully.")
-        logging.info(f"Processed DataFrame columns: {processed_input.columns.tolist()}")
-        logging.info(f"Processed DataFrame shape: {processed_input.shape}")
+
+        # If 'processed_input' is a DataFrame, log its columns
+        if isinstance(processed_input, pd.DataFrame):
+            logging.info(f"Processed DataFrame columns: {processed_input.columns.tolist()}")
+        logging.info(f"Processed data shape for model: {processed_input.shape}")
 
         # Make prediction
         prediction = model.predict(processed_input)
@@ -68,18 +83,16 @@ def predict():
         logging.info(f"Prediction result: {prediction.tolist()}")
 
         # Return prediction as JSON response
-        response = {'prediction': prediction.tolist()}
+        response_payload = {'prediction': prediction.tolist()}
         if prediction_proba is not None:
-            response['prediction_proba_fatal'] = prediction_proba
+            response_payload['prediction_proba_fatal'] = prediction_proba
 
-        return jsonify(response)
+        return jsonify(response_payload)
 
     except Exception as e:
         logging.error(f"Error during prediction: {e}", exc_info=True)
-        # Provide a more specific error message if possible
         return jsonify({"error": f"An error occurred during prediction: {str(e)}"}), 400
 
 if __name__ == '__main__':
-    # Run the Flask app
     # Set debug=False for production environments
     app.run(host='127.0.0.1', port=5000, debug=True)
