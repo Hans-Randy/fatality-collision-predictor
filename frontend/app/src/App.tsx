@@ -15,6 +15,160 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Options for select dropdowns - USER SHOULD UPDATE THESE WITH ACTUAL VALUES FROM DATASET
+  const districtOptions = [
+    "Scarborough",
+    "North York",
+    "Etobicoke",
+    "Toronto and East York",
+    "York",
+    "Other",
+  ];
+  const neighbourhoodOptions = [
+    // Example, likely too many for a simple select. Consider a searchable input or ensure this list is comprehensive yet manageable.
+    "Waterfront Communities-The Island",
+    "Niagara",
+    "Kensington-Chinatown",
+    "Annex",
+    "Bay Street Corridor",
+    "Downsview-Roding-CFB",
+    "York University Heights",
+    "Woburn",
+    "Malvern",
+    "Rouge",
+    "Other",
+  ];
+  const roadClassOptions = [
+    "Major Arterial",
+    "Minor Arterial",
+    "Collector",
+    "Local",
+    "Other",
+    "Laneway",
+    "Expressway",
+    "Major Arterial Ramp",
+    "Parkway",
+  ];
+  const impactypeOptions = [
+    "Pedestrian Collisions",
+    "Cyclist Collisions",
+    "Angle",
+    "Rear End",
+    "Sideswipe",
+    "Turning Movement",
+    "SMV Other",
+    "Other",
+  ];
+  const acclocOptions = [
+    "At Intersection",
+    "Non Intersection",
+    "Intersection Related",
+    "Private Property",
+    "Underpass or Tunnel",
+    "Overpass or Bridge",
+    "Laneway",
+    "Other",
+  ];
+  const traffctlOptions = [
+    "No Control",
+    "Traffic Signal",
+    "Stop Sign",
+    "Pedestrian Crossover",
+    "Yield Sign",
+    "Police Control",
+    "School Guard",
+    "Streetcar Right of Way",
+    "Traffic Controller",
+    "Other",
+  ];
+  const visibilityOptions = [
+    "Clear",
+    "Rain",
+    "Snow",
+    "Fog/Mist/Smoke",
+    "Drifting Snow",
+    "Strong Wind",
+    "Freezing Rain",
+    "Other",
+  ];
+  const lightOptions = [
+    "Daylight",
+    "Dark",
+    "Dusk",
+    "Dawn",
+    "Dark, artificial light",
+    "Dusk, artificial light",
+    "Dawn, artificial light",
+    "Other",
+  ];
+  const rdsfcondOptions = [
+    "Dry",
+    "Wet",
+    "Slush",
+    "Snow",
+    "Ice",
+    "Loose Sand/Gravel",
+    "Spilled Liquid",
+    "Other",
+  ];
+  const invtypeOptions = [
+    "Driver",
+    "Pedestrian",
+    "Cyclist",
+    "Passenger",
+    "Vehicle Owner",
+    "Motorcyclist Driver",
+    "Truck Driver",
+    "Witness",
+    "Other Involved Person",
+    "In-Line Skater",
+    "Wheelchair",
+    "Other",
+  ];
+  const invAgeOptions = [
+    "0 to 4",
+    "5 to 9",
+    "10 to 14",
+    "15 to 19",
+    "20 to 24",
+    "25 to 29",
+    "30 to 34",
+    "35 to 39",
+    "40 to 44",
+    "45 to 49",
+    "50 to 54",
+    "55 to 59",
+    "60 to 64",
+    "65 to 69",
+    "70 to 74",
+    "75 to 79",
+    "80 to 84",
+    "85 to 89",
+    "90 to 94",
+    "Over 95",
+    "Unknown",
+  ];
+  const pedcondOptions = [
+    "Normal",
+    "Had Been Drinking",
+    "Impaired Ability",
+    "Inattentive",
+    "Medical Condition",
+    "Unknown",
+    "NA",
+    "Other",
+  ];
+  const cyccondOptions = [
+    "Normal",
+    "Had Been Drinking",
+    "Impaired Ability",
+    "Inattentive",
+    "Improper Action",
+    "Unknown",
+    "NA",
+    "Other",
+  ];
+
   const handleLocationChange = (lat: number, lng: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -207,38 +361,6 @@ function App() {
     { name: "DISABILITY", label: "Disability Related?" },
   ];
 
-  // Example options - in a real app, these might come from an API or config
-  const roadClassOptions = [
-    "Major Arterial",
-    "Minor Arterial",
-    "Collector",
-    "Local",
-    "Other",
-  ];
-  const invAgeOptions = [
-    "0 to 4",
-    "5 to 9",
-    "10 to 14",
-    "15 to 19",
-    "20 to 24",
-    "25 to 29",
-    "30 to 34",
-    "35 to 39",
-    "40 to 44",
-    "45 to 49",
-    "50 to 54",
-    "55 to 59",
-    "60 to 64",
-    "65 to 69",
-    "70 to 74",
-    "75 to 79",
-    "80 to 84",
-    "85 to 89",
-    "90 to 94",
-    "Over 95",
-    "Unknown",
-  ];
-
   return (
     <div className="App">
       <header className="App-header">
@@ -277,37 +399,92 @@ function App() {
             )}
             {renderInputField("LATITUDE", "Latitude (-90 to 90)", "text")}
             {renderInputField("LONGITUDE", "Longitude (-180 to 180)", "text")}
-            {renderInputField("DISTRICT", "District")}
-            {renderInputField("NEIGHBOURHOOD_158", "Neighbourhood")}
+            {renderInputField(
+              "DISTRICT",
+              "District",
+              "select",
+              districtOptions
+            )}
+            {renderInputField(
+              "NEIGHBOURHOOD_158",
+              "Neighbourhood",
+              "select",
+              neighbourhoodOptions
+            )}
             {renderInputField(
               "ROAD_CLASS",
               "Road Class",
               "select",
               roadClassOptions
             )}
-            {renderInputField("IMPACTYPE", "Impact Type")}
+            {renderInputField(
+              "IMPACTYPE",
+              "Impact Type",
+              "select",
+              impactypeOptions
+            )}
           </div>
 
           <div className="form-section">
             <h3>Conditions</h3>
-            {renderInputField("ACCLOC", "Accident Location Type")}
-            {renderInputField("TRAFFCTL", "Traffic Control")}
-            {renderInputField("VISIBILITY", "Visibility")}
-            {renderInputField("LIGHT", "Light Condition")}
-            {renderInputField("RDSFCOND", "Road Surface Condition")}
+            {renderInputField(
+              "ACCLOC",
+              "Accident Location Type",
+              "select",
+              acclocOptions
+            )}
+            {renderInputField(
+              "TRAFFCTL",
+              "Traffic Control",
+              "select",
+              traffctlOptions
+            )}
+            {renderInputField(
+              "VISIBILITY",
+              "Visibility",
+              "select",
+              visibilityOptions
+            )}
+            {renderInputField(
+              "LIGHT",
+              "Light Condition",
+              "select",
+              lightOptions
+            )}
+            {renderInputField(
+              "RDSFCOND",
+              "Road Surface Condition",
+              "select",
+              rdsfcondOptions
+            )}
           </div>
 
           <div className="form-section">
             <h3>Involvement Details</h3>
-            {renderInputField("INVTYPE", "Primary Involved Type")}
+            {renderInputField(
+              "INVTYPE",
+              "Primary Involved Type",
+              "select",
+              invtypeOptions
+            )}
             {renderInputField(
               "INVAGE",
               "Involved Person's Age Group",
               "select",
               invAgeOptions
             )}
-            {renderInputField("PEDCOND", "Pedestrian Condition")}
-            {renderInputField("CYCCOND", "Cyclist Condition")}
+            {renderInputField(
+              "PEDCOND",
+              "Pedestrian Condition",
+              "select",
+              pedcondOptions
+            )}
+            {renderInputField(
+              "CYCCOND",
+              "Cyclist Condition",
+              "select",
+              cyccondOptions
+            )}
           </div>
 
           <div className="form-section grid-section">
