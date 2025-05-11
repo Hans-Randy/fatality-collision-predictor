@@ -57,7 +57,7 @@ export const initialFormData: CollisionInput = {
   LONGITUDE: "", // Initialize as empty string for controlled input
   PEDESTRIAN: "NO",
   CYCLIST: "NO",
-  AUTOMOBILE: "YES",
+  AUTOMOBILE: "NO",
   MOTORCYCLE: "NO",
   TRUCK: "NO",
   TRSN_CITY_VEH: "NO",

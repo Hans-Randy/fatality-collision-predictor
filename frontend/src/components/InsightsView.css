@@ -1,0 +1,65 @@
+.insights-view .view-header {
+  /* Styles for the main header of the insights page, if different from others */
+  /* Example: margin-bottom: 20px; border-bottom: 1px solid #ddd; */
+}
+
+.insights-subnav {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.insights-subnav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 20px; /* Spacing between subnav items */
+}
+
+.insights-subnav li a {
+  text-decoration: none;
+  color: #3498db; /* Theme color for links */
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.insights-subnav li a:hover {
+  background-color: #ecf0f1; /* Light background on hover */
+  color: #2980b9; /* Darker shade of theme color */
+}
+.insights-subnav li a.active {
+  /* Assuming NavLink will add \'active\' class */
+  background-color: #3498db;
+  color: white;
+}
+
+.insights-content-area {
+  /* Styles for the area where the specific insight component (Outlet) will render */
+  padding-top: 10px;
+}
+
+.region-collisions-report table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.region-collisions-report th,
+.region-collisions-report td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.region-collisions-report th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.region-collisions-report h4 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #333;
+}

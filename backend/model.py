@@ -19,7 +19,7 @@ from utils.sampling import apply_sampling
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-if __name__ == "__main__":
+def main():
     # Load your data here
     logging.info("Loading data...")
     df = pd.read_csv(DATA_DIR / 'TOTAL_KSI_6386614326836635957.csv')
@@ -75,7 +75,6 @@ if __name__ == "__main__":
     logging.info(f"Number of Fatal accidents: {y.sum()}")
     logging.info(f"Number of Non-Fatal accidents: {len(y) - y.sum()}")
 
-
     # Create a list of classifiers.
     classifiers = [
         ('knn', KNeighborsClassifier(n_neighbors=5)),
@@ -105,3 +104,7 @@ if __name__ == "__main__":
     joblib.dump(voting_clf, SERIALIZED_DIR / 'model.pkl')
     joblib.dump(preprocessing_pipeline, SERIALIZED_DIR / 'preprocessing_pipeline.pkl')
     logging.info("Model and preprocessing pipeline saved successfully.")
+
+
+if __name__ == "__main__":
+    main()
