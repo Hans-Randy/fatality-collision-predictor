@@ -112,7 +112,6 @@ const CollisionForm: React.FC<CollisionFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Collision Details</h2>
       {/* General Information fields - Note: MapPicker is kept in App.tsx as it interacts with LAT/LONG states directly */}
       {/* The LATITUDE and LONGITUDE input fields are still rendered here to be part of the form submission and layout */}
       <div className="form-section">
@@ -201,7 +200,7 @@ const CollisionForm: React.FC<CollisionFormProps> = ({
       </div>
 
       <div className="form-section grid-section">
-        <h3>Factors & Vehicle Types</h3>
+        <h3 className="grid-title">Factors & Vehicle Types</h3>
         {binaryFields.map((field) =>
           renderInputField(field.name, field.label, "checkbox")
         )}

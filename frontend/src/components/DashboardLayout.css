@@ -6,7 +6,8 @@
   padding: 30px;
   margin-left: 250px; /* Same as sidebar width */
   min-height: 100vh;
-  background-color: #f4f7f6; /* Light background for content area */
+  background-color: #18181b;
+  color: #fff;
   box-sizing: border-box;
 }
 /* Responsive adjustments: if screen is too small, stack sidebar or use a burger menu */

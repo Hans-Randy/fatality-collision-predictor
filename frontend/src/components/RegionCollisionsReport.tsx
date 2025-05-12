@@ -93,7 +93,7 @@ const RegionCollisionsReport: React.FC = () => {
             <Bar
               dataKey="collision_count"
               name="Number of Collisions"
-              fill="#3498db"
+              fill="#009E85"
             />
           </BarChart>
         </ResponsiveContainer>
