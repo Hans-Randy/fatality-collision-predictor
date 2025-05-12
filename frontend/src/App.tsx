@@ -9,7 +9,7 @@ import PredictorView from "./components/PredictorView";
 import InsightsView from "./components/InsightsView";
 import RegionCollisionsReport from "./components/RegionCollisionsReport";
 
-const API_URL = import.meta.env.VITE_API_PREDICT_URL; // Get API_URL from env
+const PREDICT_URL = `${import.meta.env.VITE_API_URL}/predict`; // Get API_URL from env
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""; // Get API key
 
 function App() {
@@ -360,7 +360,7 @@ function App() {
     setError(null);
     setPredictionResult(null);
 
-    if (!API_URL) {
+    if (!PREDICT_URL) {
       setError(
         "API URL is not configured. Please set VITE_API_PREDICT_URL in your environment variables."
       );
@@ -440,7 +440,7 @@ function App() {
     };
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PREDICT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

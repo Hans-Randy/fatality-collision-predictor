@@ -15,8 +15,9 @@ interface RegionCollisionData {
   collision_count: number;
 }
 
-const VITE_API_INSIGHTS_COLLISION_BY_REGION_URL = import.meta.env
-  .VITE_API_INSIGHTS_COLLISION_BY_REGION_URL;
+const VITE_API_INSIGHTS_COLLISION_BY_REGION_URL = `${
+  import.meta.env.VITE_API_URL
+}/insights/collisions-by-region`;
 
 const RegionCollisionsReport: React.FC = () => {
   const [data, setData] = useState<RegionCollisionData[]>([]);
