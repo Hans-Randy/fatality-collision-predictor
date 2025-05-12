@@ -113,7 +113,6 @@ const CollisionForm: React.FC<CollisionFormProps> = ({
   return (
     <form onSubmit={handleSubmit}>
       <h2>Collision Details</h2>
-
       {/* General Information fields - Note: MapPicker is kept in App.tsx as it interacts with LAT/LONG states directly */}
       {/* The LATITUDE and LONGITUDE input fields are still rendered here to be part of the form submission and layout */}
       <div className="form-section">

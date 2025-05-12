@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.config import SERIALIZED_DIR
+from utils.config import SERIALIZED_DIR, DATA_DIR
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -79,6 +79,28 @@ def predict():
     except Exception as e:
         logging.error(f"Error during prediction: {e}", exc_info=True)
         return jsonify({"error": f"An error occurred during prediction: {str(e)}"}), 400
+
+@app.route('/api/insights/collisions-by-region', methods=['GET'])
+def get_collisions_by_region():
+    """API endpoint to get collision statistics by region."""
+    try:
+        # Load the data
+        df = pd.read_csv(DATA_DIR / 'TOTAL_KSI_6386614326836635957.csv')
+        
+        # Group by DISTRICT and count collisions
+        region_stats = df.groupby('DISTRICT').size().reset_index(name='collision_count')
+        
+        # Sort by collision count in descending order
+        region_stats = region_stats.sort_values('collision_count', ascending=False)
+        
+        # Convert to list of dictionaries for JSON response
+        result = region_stats.to_dict('records')
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        logging.error(f"Error getting collisions by region: {e}", exc_info=True)
+        return jsonify({"error": f"An error occurred while getting collisions by region: {str(e)}"}), 500
 
 if __name__ == '__main__':
     # Set debug=False for production environments

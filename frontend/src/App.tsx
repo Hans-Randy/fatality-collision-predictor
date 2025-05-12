@@ -9,7 +9,7 @@ import PredictorView from "./components/PredictorView";
 import InsightsView from "./components/InsightsView";
 import RegionCollisionsReport from "./components/RegionCollisionsReport";
 
-const API_URL = import.meta.env.VITE_API_URL; // Get API_URL from env
+const API_URL = import.meta.env.VITE_API_PREDICT_URL; // Get API_URL from env
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""; // Get API key
 
 function App() {
@@ -362,7 +362,7 @@ function App() {
 
     if (!API_URL) {
       setError(
-        "API URL is not configured. Please set VITE_API_URL in your environment variables."
+        "API URL is not configured. Please set VITE_API_PREDICT_URL in your environment variables."
       );
       setIsLoading(false);
       return;
