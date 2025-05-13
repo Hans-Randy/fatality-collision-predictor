@@ -102,6 +102,11 @@ def get_collisions_by_region():
         logging.error(f"Error getting collisions by region: {e}", exc_info=True)
         return jsonify({"error": f"An error occurred while getting collisions by region: {str(e)}"}), 500
 
+@app.route('/')
+def health_check():
+    """Health check endpoint."""
+    return jsonify({"status": "healthy", "message": "Server is running"})
+
 if __name__ == '__main__':
     # Set debug=False for production environments
     app.run(host='0.0.0.0', port=5000, debug=False)
