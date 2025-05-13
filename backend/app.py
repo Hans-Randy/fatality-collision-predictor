@@ -9,7 +9,16 @@ from utils.config import SERIALIZED_DIR, DATA_DIR
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "https://fatality-collision-predictor.vercel.app",
+            "http://localhost:5000"  # Keep local development working
+        ],
+        "methods": ["POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Load the model and pipeline artifacts
 try:
