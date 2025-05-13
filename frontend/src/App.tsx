@@ -9,7 +9,7 @@ import PredictorView from "./components/PredictorView";
 import InsightsView from "./components/InsightsView";
 import RegionCollisionsReport from "./components/RegionCollisionsReport";
 
-const PREDICT_URL = `${import.meta.env.VITE_API_URL}/predict`; // Get API_URL from env
+const PREDICT_URL = `${import.meta.env.VITE_API_URL}/api/predict`; // Get API_URL from env
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""; // Get API key
 
 function App() {
